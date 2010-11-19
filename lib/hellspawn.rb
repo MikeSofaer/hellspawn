@@ -7,13 +7,14 @@ class Hellspawn
       @options = options
     end
     def march!
-      #slaughter_stragglers!
+      FileUtils.rm_rf(@options[:base])
       each {|daemon| daemon.march!(@options[:base])}
     end
 
     def summon(options)
       self << Daemon.new(options)
     end
+
     class Daemon < Hash
       def initialize(options)
         replace options

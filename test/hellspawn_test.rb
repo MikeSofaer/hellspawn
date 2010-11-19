@@ -39,4 +39,10 @@ class BasicTest < Test::Unit::TestCase
     run_script = File.read("/tmp/test_services/thin/run")
     assert { run_script.split("\n").first == "exec 2&>1" }
   end
+  def test_removal
+    @legion.summon @thin
+    @legion.march!
+    Hellspawn.legion(:base => "/tmp/test_services", :name => "empty_legion").march!
+    assert {Dir.glob("/tmp/test_services/*") == [] }
+  end
 end
