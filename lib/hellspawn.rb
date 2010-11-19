@@ -29,7 +29,10 @@ class Hellspawn
         run_file.close
       end
       def run_script
-        "exec #{self[:executable]}"
+        "exec #{self[:executable]} " + flag_snippet
+      end
+      def flag_snippet
+        self[:flags].map{|k,v| k + " " + v}.join(" ")
       end
       def run_prep
         "exec 2&>1"
