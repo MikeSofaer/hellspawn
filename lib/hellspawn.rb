@@ -12,7 +12,18 @@ class Hellspawn
     end
 
     def summon(options)
-      self << Daemon.new(options)
+      by_flag = options.delete :by_flag
+      if by_flag
+        by_flag[1].each do |value|
+          new_options = options.dup
+          new_options[:flags] = options[:flags].dup || {}
+          new_options[:flags][by_flag[0]] = value
+          new_options[:name] = options[:name] +  "_" + value.to_s
+          self << Daemon.new(new_options)
+        end
+      else
+        self << Daemon.new(options)
+      end
     end
 
     class Daemon < Hash
@@ -33,7 +44,7 @@ class Hellspawn
         "exec #{self[:executable]} " + flag_snippet
       end
       def flag_snippet
-        self[:flags].map{|k,v| k + " " + v}.join(" ")
+        self[:flags].map{|k,v| k + " " + v.to_s}.join(" ")
       end
       def run_prep
         "exec 2&>1"
