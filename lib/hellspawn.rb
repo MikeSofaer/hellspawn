@@ -7,6 +7,8 @@ class Hellspawn
   end
   def self.legions; @@legions; end
   def self.legions=(value); @@legions = value; end  #for_test
+  def self.summon(*args); @@legions.first.summon(*args); end
+  def self.march!; @@legions.first.march!; end
   class Legion < Array
     def initialize(options)
       @options = options

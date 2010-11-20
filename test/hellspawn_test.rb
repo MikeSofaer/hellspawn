@@ -80,4 +80,9 @@ class BasicTest < Test::Unit::TestCase
   def test_get_legion
     assert { Hellspawn.legions == [@legion] }
   end
+  def test_shorctuts
+    Hellspawn.summon @thin
+    Hellspawn.march!
+    assert {Dir.glob(File.join(@base, "thin", "run")).size == 1}
+  end
 end
