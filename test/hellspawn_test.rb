@@ -6,12 +6,12 @@ class BasicTest < Test::Unit::TestCase
     @thin  = {:name => "thin",
       :executable => "/usr/local/bin/thin",
       :flags => {"-e" => "production",
-        "-c" => "/usr/local/app/my_app",
+                 "-c" => "/usr/local/app/my_app",
     },
     }
     @base = "/tmp/test_services"
-    @legion = Hellspawn.legion(:base => @base,
-                               :log_dir => "/tmp/test_services_log")
+    @log_dir = "/tmp/test_services_log"
+    @legion = Hellspawn.legion(:base => @base, :log_dir => @log_dir)
   end
   def teardown
     FileUtils.rm_rf @base
@@ -44,7 +44,7 @@ class BasicTest < Test::Unit::TestCase
     @legion.summon @thin
     @legion.march!
     run_script = File.read("#{@base}/thin/log/run")
-    assert { run_script.split("\n").first == "exec multilog #{@legion.log_dir}/thin.log" }
+    assert { run_script.split("\n").first == "exec multilog #{@log_dir}/thin.log" }
   end
   def test_flags
     @legion.summon @thin
