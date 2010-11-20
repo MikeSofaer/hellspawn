@@ -51,7 +51,7 @@ class Hellspawn
         end
       end
       def run_script
-        "exec #{self[:executable]} " + flag_snippet
+        "exec #{dt_options}#{self[:executable]} " + flag_snippet
       end
       def flag_snippet
         self[:flags].map{|k,v| k + " " + v.to_s}.join(" ")
@@ -61,6 +61,11 @@ class Hellspawn
       end
       def run_prep
         "exec 2&>1"
+      end
+      def dt_options
+        parts = []
+        parts << "softlimit #{self[:memory_limit_mb] * 1024} " if self[:memory_limit_mb]
+        parts.join("")
       end
     end
   end

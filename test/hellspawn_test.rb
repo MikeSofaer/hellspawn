@@ -51,6 +51,11 @@ class BasicTest < Test::Unit::TestCase
     run_script_lines = File.read("#{@base}/thin/run").split("\n")
     assert { run_script_lines.include?("exec /usr/local/bin/thin -c /usr/local/app/my_app -e production") }
   end
+  def test_memory_limit
+    @legion.summon @thin.merge(:memory_limit_mb => 500)
+    @legion.march!
+    assert {File.read("#{@base}/thin/run").match /softlimit 512000/ }
+  end
   def test_stderr
     @legion.summon @thin
     @legion.march!
