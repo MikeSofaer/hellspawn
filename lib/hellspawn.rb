@@ -6,9 +6,13 @@ class Hellspawn
     def initialize(options)
       @options = options
     end
+    def log_dir
+      @options[:log_dir]
+    end
     def march!
       FileUtils.rm_rf(@options[:base])
-      each {|daemon| daemon.march!(@options[:base])}
+      FileUtils.mkdir_p(log_dir) if log_dir
+      each {|daemon| daemon.march!(@options[:base], log_dir)}
     end
 
     def summon(options)
@@ -33,18 +37,27 @@ class Hellspawn
       def name
         self[:name]
       end
-      def march!(base)
+      def march!(base, log_dir = nil)
         FileUtils.mkdir_p File.join(base, name)
-        run_file = File.open(File.join(base, name, "run"), "w+")
-        run_file.puts run_prep
-        run_file.puts run_script
-        run_file.close
+        File.open(File.join(base, name, "run"), "w+") do |f|
+          f.puts run_prep
+          f.puts run_script
+        end
+        if log_dir
+          FileUtils.mkdir_p File.join(base, name, 'log')
+          File.open(File.join(base, name,'log', "run"), "w+") do |f|
+            f.puts log_script(log_dir)
+          end
+        end
       end
       def run_script
         "exec #{self[:executable]} " + flag_snippet
       end
       def flag_snippet
         self[:flags].map{|k,v| k + " " + v.to_s}.join(" ")
+      end
+      def log_script log_dir
+        "exec multilog #{log_dir}/#{self[:name]}.log"
       end
       def run_prep
         "exec 2&>1"

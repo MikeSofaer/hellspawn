@@ -10,7 +10,8 @@ class BasicTest < Test::Unit::TestCase
                         },
       }
       @base = "/tmp/test_services"
-      @legion = Hellspawn.legion(:base => @base, :name => "test_legion")
+      @legion = Hellspawn.legion(:base => @base,
+                                 :log_dir => "/tmp/test_services_log")
     end
     def teardown
       FileUtils.rm_rf @base
@@ -28,6 +29,22 @@ class BasicTest < Test::Unit::TestCase
     run_script = File.read("#{@base}/thin/run")
     assert { run_script.match /exec \/usr\/local\/bin\/thin/ }
   end
+  def test_legion_log_dir
+    @legion.summon @thin
+    @legion.march!
+    assert { Dir.glob(@legion.log_dir) == [ @legion.log_dir]}
+  end
+  def test_daemon_log_dir
+    @legion.summon @thin
+    @legion.march!
+    assert { Dir.glob("#{@base}/thin/log/run") == ["#{@base}/thin/log/run"]}
+  end
+  def test_daemon_log_script
+    @legion.summon @thin
+    @legion.march!
+    run_script = File.read("#{@base}/thin/log/run")
+    assert { run_script.split("\n").first == "exec multilog #{@legion.log_dir}/thin.log" }
+  end
   def test_flags
     @legion.summon @thin
     @legion.march!
@@ -43,7 +60,7 @@ class BasicTest < Test::Unit::TestCase
   def test_removal
     @legion.summon @thin
     @legion.march!
-    Hellspawn.legion(:base => @base, :name => "empty_legion").march!
+    Hellspawn.legion(:base => @base).march!
     assert {Dir.glob("#{@base}/*") == [] }
   end
   def test_squad_by_flag
