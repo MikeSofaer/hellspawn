@@ -1,7 +1,12 @@
 class Hellspawn
+  @@legions = []
   def self.legion(options)
-    Legion.new(options)
+    legion = Legion.new(options)
+    @@legions << legion
+    legion
   end
+  def self.legions; @@legions; end
+  def self.legions=(value); @@legions = value; end  #for_test
   class Legion < Array
     def initialize(options)
       @options = options

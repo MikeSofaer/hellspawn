@@ -2,20 +2,21 @@ require 'test/test_helper'
 require 'lib/hellspawn'
 
 class BasicTest < Test::Unit::TestCase
-    def setup
-      @thin  = {:name => "thin",
-              :executable => "/usr/local/bin/thin",
-              :flags => {"-e" => "production",
-                         "-c" => "/usr/local/app/my_app",
-                        },
-      }
-      @base = "/tmp/test_services"
-      @legion = Hellspawn.legion(:base => @base,
-                                 :log_dir => "/tmp/test_services_log")
-    end
-    def teardown
-      FileUtils.rm_rf @base
-    end
+  def setup
+    @thin  = {:name => "thin",
+      :executable => "/usr/local/bin/thin",
+      :flags => {"-e" => "production",
+        "-c" => "/usr/local/app/my_app",
+    },
+    }
+    @base = "/tmp/test_services"
+    @legion = Hellspawn.legion(:base => @base,
+                               :log_dir => "/tmp/test_services_log")
+  end
+  def teardown
+    FileUtils.rm_rf @base
+    Hellspawn.legions = []
+  end
   def test_legion
     assert {@legion.size == 0}
   end
@@ -75,5 +76,8 @@ class BasicTest < Test::Unit::TestCase
     assert {File.read("#{@base}/thin_8005/run").match /thin .* -p 8005/ }
     assert {File.read("#{@base}/thin_8006/run").match /thin .* -p 8006/ }
     assert {File.read("#{@base}/thin_8007/run").match /thin .* -p 8007/ }
+  end
+  def test_get_legion
+    assert { Hellspawn.legions == [@legion] }
   end
 end
