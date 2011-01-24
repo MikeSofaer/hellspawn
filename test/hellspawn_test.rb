@@ -8,6 +8,7 @@ class BasicTest < Test::Unit::TestCase
       :flags => {"-e" => "production",
                  "-c" => "/usr/local/app/my_app",
     },
+      :directory => "/usr/local/app/my_app",
     }
     @base = "/tmp/test_services"
     @log_dir = "/tmp/test_services_log"
@@ -29,6 +30,12 @@ class BasicTest < Test::Unit::TestCase
     @legion.march!
     run_script = File.read("#{@base}/thin/run")
     assert { run_script.match /exec \/usr\/local\/bin\/thin/ }
+  end
+  def test_legion_dir
+    @legion.summon @thin
+    @legion.march!
+    run_script = File.read("#{@base}/thin/run")
+    assert { run_script.match /^cd #{@thin[:directory]}$/ }
   end
   def test_legion_log_dir
     @legion.summon @thin
@@ -55,7 +62,7 @@ class BasicTest < Test::Unit::TestCase
   def test_memory_limit
     @legion.summon @thin.merge(:memory_limit_mb => 500)
     @legion.march!
-    assert {File.read("#{@base}/thin/run").match /softlimit 512000/ }
+    assert {File.read("#{@base}/thin/run").match /softlimit -m 512000/ }
   end
   def test_stderr
     @legion.summon @thin

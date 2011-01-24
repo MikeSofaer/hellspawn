@@ -67,11 +67,14 @@ class Hellspawn
         "exec multilog #{log_dir}/#{self[:name]}.log"
       end
       def run_prep
-        "exec 2&>1"
+        "exec 2&>1" + dir_snippet
+      end
+      def dir_snippet
+        "\ncd #{self[:directory]}" if key? :directory
       end
       def dt_options
         parts = []
-        parts << "softlimit #{self[:memory_limit_mb] * 1024} " if self[:memory_limit_mb]
+        parts << "softlimit -m #{self[:memory_limit_mb] * 1024} " if self[:memory_limit_mb]
         parts.join("")
       end
     end
