@@ -37,6 +37,12 @@ class BasicTest < Test::Unit::TestCase
     run_script = File.read("#{@base}/thin/run")
     assert { run_script.match /^cd #{@thin[:directory]}$/ }
   end
+  def test_executable
+    @legion.summon @thin
+    @legion.march!
+    assert { `ls -l #{@base}/thin/run | awk '{print $1}'`.match /x/ }
+    assert { `ls -l #{@base}/thin/log/run | awk '{print $1}'`.match /x/ }
+  end
   def test_legion_log_dir
     @legion.summon @thin
     @legion.march!

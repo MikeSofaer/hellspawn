@@ -49,11 +49,13 @@ class Hellspawn
         File.open(File.join(base, name, "run"), "w+") do |f|
           f.puts run_prep
           f.puts run_script
+          f.chmod(0700)
         end
         if log_dir
           FileUtils.mkdir_p File.join(base, name, 'log')
           File.open(File.join(base, name,'log', "run"), "w+") do |f|
             f.puts log_script(log_dir)
+            f.chmod(0700)
           end
         end
       end
