@@ -30,6 +30,7 @@ class BasicTest < Test::Unit::TestCase
     @legion.march!
     run_script = File.read("#{@base}/thin/run")
     assert { run_script.match /exec \/usr\/local\/bin\/thin/ }
+    assert { run_script.match /#!.*bash/ }
   end
   def test_legion_dir
     @legion.summon @thin
@@ -57,7 +58,8 @@ class BasicTest < Test::Unit::TestCase
     @legion.summon @thin
     @legion.march!
     run_script = File.read("#{@base}/thin/log/run")
-    assert { run_script.split("\n").first == "exec multilog #{@log_dir}/thin.log" }
+    assert { run_script.match /#!.*bash/ }
+    assert { run_script.match /exec multilog #{@log_dir}\/thin.log/ }
   end
   def test_flags
     @legion.summon @thin
@@ -74,7 +76,7 @@ class BasicTest < Test::Unit::TestCase
     @legion.summon @thin
     @legion.march!
     run_script = File.read("#{@base}/thin/run")
-    assert { run_script.split("\n").first == "exec 2&>1" }
+    assert { run_script.match /exec 2>&1/ }
   end
   def test_removal
     @legion.summon @thin

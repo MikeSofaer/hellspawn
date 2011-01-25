@@ -66,10 +66,10 @@ class Hellspawn
         self[:flags].map{|k,v| k + " " + v.to_s}.join(" ")
       end
       def log_script log_dir
-        "exec multilog #{log_dir}/#{self[:name]}.log"
+        "#! /bin/bash\nexec multilog #{log_dir}/#{self[:name]}.log"
       end
       def run_prep
-        "exec 2&>1" + dir_snippet
+        "#! /bin/bash\nexec 2>&1" + dir_snippet
       end
       def dir_snippet
         "\ncd #{self[:directory]}" if key? :directory
