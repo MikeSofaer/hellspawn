@@ -24,6 +24,7 @@ class Hellspawn
 
     def summon(options)
       by_flag = options.delete :by_flag
+      options[:legion_options] = @options
       if by_flag
         by_flag[1].each do |value|
           new_options = options.dup
@@ -69,10 +70,14 @@ class Hellspawn
         "#! /bin/bash\nexec multilog #{log_dir}/#{self[:name]}.log"
       end
       def run_prep
-        "#! /bin/bash\nexec 2>&1" + dir_snippet
+        "#! /bin/bash\nexec 2>&1" + dir_snippet + prep_source_snippet
       end
       def dir_snippet
-        "\ncd #{self[:directory]}" if key? :directory
+        key?(:directory) ? "\ncd #{self[:directory]}" : ""
+      end
+      def prep_source_snippet
+        path = self[:legion_options][:prep_script]
+        path ? "\nsource #{path}" : ""
       end
       def dt_options
         parts = []

@@ -100,4 +100,11 @@ class BasicTest < Test::Unit::TestCase
     Hellspawn.march!
     assert {Dir.glob(File.join(@base, "thin", "run")).size == 1}
   end
+  def test_prep
+    legion = Hellspawn.legion(:base => @base, :log_dir => @log_dir, :prep_script => "/etc/sod/environment")
+    legion.summon @thin
+    legion.march!
+    run_script = File.read("#{@base}/thin/run")
+    assert { run_script.match /source \/etc\/sod\/environment/ }
+  end
 end
