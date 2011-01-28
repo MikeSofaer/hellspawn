@@ -19,3 +19,6 @@ but it doesn't yet know how to stop currently running services in those director
 
 You can also use Hellspawn.summon and Hellspawn.march! to access your first legion.
 This is useful when writing chef scripts, so you can summon from anywhere without passing the legion around
+
+#Thanks
+Thanks to *Affine Systems* for sponsoring some of the development of this library
